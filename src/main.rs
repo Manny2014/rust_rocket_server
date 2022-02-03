@@ -67,6 +67,7 @@ pub fn rocket() -> _ {
 
 #[cfg(test)]
 mod test {
+    // See: https://github.com/SergioBenitez/Rocket/blob/master/examples/config/src/tests.rs
     use rocket::local::blocking::Client;
     use rocket::http::Status;
     use rocket::config::{Config, LogLevel};
