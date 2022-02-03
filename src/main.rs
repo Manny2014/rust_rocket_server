@@ -19,7 +19,7 @@ struct AppConfig {
 }
 
 #[get("/")]
-fn car_lot() -> String {
+pub fn car_lot() -> String {
    let data = CarLot::new("Chicago")
     .add(
         Car::new()
@@ -63,3 +63,19 @@ pub fn rocket() -> _ {
     rocket
 }
 
+
+
+#[cfg(test)]
+mod test {
+    use rocket::local::blocking::Client;
+    use rocket::http::Status;
+    use rocket::config::{Config, LogLevel};
+
+    #[test]
+    fn root_path() {
+        let client = Client::tracked(super::rocket()).expect("valid rocket instance");
+        let mut response = client.get("/").dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        // assert_eq!(response.into_string().unwrap(), "Hello, world!");
+    }
+}
