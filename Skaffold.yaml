@@ -3,7 +3,7 @@ kind: Config
 metadata:
   name: rocket-server
 profiles:
-- name: default
+- name: local
   portForward:
   - resourceType: deployment
     resourceName: rocket-server
@@ -32,8 +32,42 @@ profiles:
   deploy:
     kubectl:
       manifests:
-        - local/deploy/*
+        - deploy/local/*
   activation:
     - env: MAGIC_VAR=1337
     - kubeContext: kind-kind
+      command: dev
+- name: gcp-dev
+  portForward:
+  - resourceType: deployment
+    resourceName: rocket-server
+    namespace: dev-demo
+    port: 9090
+  build:
+    tagPolicy:
+      inputDigest: {}
+    local:
+      push: true
+    artifacts:
+    - image: rust_rocket_server
+      hooks:
+        before:
+          - command: ["bash", "-c", "echo building image --> $SKAFFOLD_IMAGE!"]
+            os: [darwin, linux]
+        after:
+          - command: ["bash", "-c", "echo built image --> $SKAFFOLD_IMAGE!"]
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # sync a single file into the `/app` folder
+          - src: 'Rocket.toml'
+            dest: /app
+  deploy:
+    kubectl:
+      manifests:
+        - deploy/gcp/dev/*
+  activation:
+    - env: ROCKET_PORT=9090
+    - kubeContext: # TODO
       command: dev

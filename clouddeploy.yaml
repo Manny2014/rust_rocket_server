@@ -1,0 +1,25 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+ name: rust-rocket-server
+description: Example Cloud Deploy flow
+serialPipeline:
+ stages:
+ - targetId: dev-deploy
+   profiles: [gcp-dev]
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+ name: dev-deploy
+description: development cluster
+gke:
+ cluster: projects/dev-playground-5491/locations/us-central1/clusters/shard-01
+# ---
+# apiVersion: deploy.cloud.google.com/v1
+# kind: Target
+# metadata:
+#  name: qsprod
+# description: production cluster
+# gke:
+#  cluster: projects/dev-playground-5491/locations/us-central1/clusters/shard-01
