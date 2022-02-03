@@ -16,12 +16,6 @@ profiles:
       push: true
     artifacts:
     - image: rust_rocket_server
-      hooks:
-        before:
-          - command: ["bash", "-c", "echo building image --> $SKAFFOLD_IMAGE!"]
-            os: [darwin, linux]
-        after:
-          - command: ["bash", "-c", "echo built image --> $SKAFFOLD_IMAGE!"]
       docker:
         dockerfile: Dockerfile
       sync:
@@ -50,24 +44,11 @@ profiles:
       push: true
     artifacts:
     - image: rust_rocket_server
-      hooks:
-        before:
-          - command: ["bash", "-c", "echo building image --> $SKAFFOLD_IMAGE!"]
-            os: [darwin, linux]
-        after:
-          - command: ["bash", "-c", "echo built image --> $SKAFFOLD_IMAGE!"]
       docker:
         dockerfile: Dockerfile
-      sync:
-        manual:
-          # sync a single file into the `/app` folder
-          - src: 'Rocket.toml'
-            dest: /app
   deploy:
     kubectl:
       manifests:
         - deploy/gcp/dev/*
   activation:
     - env: ROCKET_PORT=9090
-    - kubeContext: # TODO
-      command: dev
