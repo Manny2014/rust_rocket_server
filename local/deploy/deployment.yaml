@@ -1,0 +1,31 @@
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: rocket-server
+# spec:
+#   containers:
+#   - name: app
+#     image: rust_rocket_server
+
+# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocket-server
+  labels:
+    app: rocket-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rocket-server
+  template:
+    metadata:
+      labels:
+        app: rocket-server
+    spec:
+      containers:
+        - name: app
+          image: rust_rocket_server
+          ports:
+            - containerPort: 8000 

@@ -1,0 +1,39 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: rocket-server
+profiles:
+- name: default
+  portForward:
+  - resourceType: deployment
+    resourceName: rocket-server
+    namespace: default
+    port: 8000
+  build:
+    tagPolicy:
+      inputDigest: {}
+    local:
+      push: true
+    artifacts:
+    - image: rust_rocket_server
+      hooks:
+        before:
+          - command: ["bash", "-c", "echo building image --> $SKAFFOLD_IMAGE!"]
+            os: [darwin, linux]
+        after:
+          - command: ["bash", "-c", "echo built image --> $SKAFFOLD_IMAGE!"]
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          # sync a single file into the `/app` folder
+          - src: 'Rocket.toml'
+            dest: /app
+  deploy:
+    kubectl:
+      manifests:
+        - local/deploy/*
+  activation:
+    - env: MAGIC_VAR=1337
+    - kubeContext: kind-kind
+      command: dev
